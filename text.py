@@ -64,21 +64,43 @@ class Text:
             insertion_counter = 0
             if inserts and inserts[0].line_number <= line_number:
                 l = inserts.pop(0)
+                l.line_number = line_number
                 stack.append(l)
                 insertion_counter += 1
 
             line_number += insertion_counter
 
             if line.mode == Mode.DELETION:
+                line.line_number = line_number - 1
                 stack.append(line)
             else:
+                line.line_number = line_number
                 stack.append(line)
                 line_number += 1
+        # sort wrt line number, mode (deletions first, then insertions, finally default)
+        stack = sorted(stack, key=lambda x: (x.line_number, x.mode))
+        # rearrange deletions
+        # i = 0
+        # prev_del_idx = -1
+        # prev_swap_idx = -1
+        # while i < len(stack):
+        #     if stack[i].mode == Mode.DELETION and prev_del_idx > 0 and \
+        #             stack[i].line_number - stack[prev_del_idx].line_number == 1:
+        #         prev_del_idx = i
+        #         prev_swap_idx = max(i+1, prev_swap_idx)
+        #         while stack[prev_swap_idx].mode != Mode.DELETION:
+        #             prev_swap_idx += 1
+        #         prev_swap_idx += 1
+        #         stack[i], stack[prev_swap_idx] = stack[prev_swap_idx], stack[i]
+        #     else:
+        #         prev_del_idx = i
+        #     i += 1
 
-        self.display(sorted(stack, key=lambda x: (x.line_number, x.mode)))
+        self.display(stack)
 
     @staticmethod
     def display(stack: list):
+
         for line in stack:
             text = line.content.strip('\n')
             if line.mode == Mode.DELETION:
