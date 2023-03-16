@@ -7,6 +7,6 @@ but also the line numbers where the changes occurred, much like `git diff`.
 `python dif.py <file1> <file2>`
 
 ## Output:
-![sample_input](https://imgur.com/a/NgGinqE)
+![sample_input]([https://imgur.com/a/NgGinqE](https://i.imgur.com/BzI1b29.png))
 
-![sample_output](https://imgur.com/a/f0F10ss)
+![sample_output]([https://imgur.com/a/f0F10ss](https://i.imgur.com/ewtAvPg.png))
