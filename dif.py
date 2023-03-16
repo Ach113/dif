@@ -1,7 +1,7 @@
 import sys
 
-from text import Text
-from util import get_operations
+from src.text import Text
+from src.util import get_operations
 
 
 def main():

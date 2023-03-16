@@ -17,6 +17,7 @@ class Mode(Enum):
     def __lt__(self, other):
         return self.value < other.value
 
+
 class Line:
 
     def __init__(self, line_number: int, content: str, mode: Mode):
@@ -100,7 +101,6 @@ class Text:
 
     @staticmethod
     def display(stack: list):
-
         for line in stack:
             text = line.content.strip('\n')
             if line.mode == Mode.DELETION:

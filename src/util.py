@@ -1,6 +1,6 @@
 import numpy as np  # TODO: remove numpy
 
-from text import Text, Mode
+from src.text import Text, Mode
 
 
 def levenshtein_distance(file_1: Text, file_2: Text) -> np.array:
