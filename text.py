@@ -14,13 +14,8 @@ class Mode(Enum):
     INSERTION = 1
     NO_ACTION = 2
 
-    def __str__(self):
-        if self == Mode.DELETION:
-            return '-'
-        if self == Mode.INSERTION:
-            return '+'
-        return " "
-
+    def __lt__(self, other):
+        return self.value < other.value
 
 class Line:
 
@@ -62,23 +57,36 @@ class Text:
         """
         if all(x.mode == Mode.NO_ACTION for x in list(self.lines.values())) and len(inserts) == 0:
             return
-        line_number, insertion_counter = 1, 0
-        for _, line in self.lines.items():
 
+        line_number, insertion_counter = 1, 0
+        stack = list()
+        for _, line in self.lines.items():
             insertion_counter = 0
-            while inserts and inserts[0].line_number <= line_number:
+            if inserts and inserts[0].line_number <= line_number:
                 l = inserts.pop(0)
-                text = l.content.strip('\n')
-                print(Color.GREEN + f'{line_number} {l.mode} {text}' + Color.END)
+                stack.append(l)
                 insertion_counter += 1
 
             line_number += insertion_counter
+
+            if line.mode == Mode.DELETION:
+                stack.append(line)
+            else:
+                stack.append(line)
+                line_number += 1
+
+        self.display(sorted(stack, key=lambda x: (x.line_number, x.mode)))
+
+    @staticmethod
+    def display(stack: list):
+        for line in stack:
             text = line.content.strip('\n')
             if line.mode == Mode.DELETION:
-                print(Color.RED + f'{line_number-1} {line.mode} {text}' + Color.END)
+                print(Color.RED + f'{line.line_number} - {text}' + Color.END)
+            elif line.mode == Mode.INSERTION:
+                print(Color.GREEN + f'{line.line_number} + {text}' + Color.END)
             else:
-                print(f'{line_number} {line.mode} {text}')
-                line_number += 1
+                print(f'{line.line_number}   {text}')
 
     @staticmethod
     def read_file(file_name: str) -> Dict:
