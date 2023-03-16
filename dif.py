@@ -23,9 +23,6 @@ class Mode(Enum):
             return '+'
         return " "
 
-    def __lt__(self, other: 'Mode') -> bool:
-        return self.value < other.value
-
 
 class Line:
 
@@ -60,46 +57,28 @@ class Text:
     def __len__(self) -> int:
         return len(self.lines)
 
-    def structure_text(self, inserts: List[Line]):
-        """
-        determines order in which the unchanged, deleted and inserted lines need to be printed
-        :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
-        """
-        stack = list()  # (line_number, mode, line)
-        line_number, insertion_counter, deletion_counter = 1, 0, 0
-        for _, line in self.lines.items():
-
-            # printing deleted lines
-            if line.mode == Mode.DELETION:
-                stack.append((line_number+deletion_counter, line.mode, line))
-                deletion_counter += 1
-
-            while inserts and inserts[0].line_number <= line_number:
-                l = inserts.pop(0)
-                stack.append((line_number, l.mode, l))
-                insertion_counter += 1
-
-            line_number += 1
-
-            if line.mode != Mode.DELETION:
-                stack.append((line_number, line.mode, line))
-
-        return sorted(stack, key=lambda x: (x[0], x[1]))
-
     def display_text(self, inserts: List[Line]):
         """
-        displays the output of the program
+        displays changes in text in appropriate order and corresponding color
         :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
         """
-        display_stack = self.structure_text(inserts)
-        for n, mode, line in display_stack:
+        line_number, insertion_counter = 1, 0
+        for _, line in self.lines.items():
+
+            insertion_counter = 0
+            while inserts and inserts[0].line_number <= line_number:
+                l = inserts.pop(0)
+                text = l.content.strip('\n')
+                print(Color.GREEN + f'{line_number} {l.mode} {text}' + Color.END)
+                insertion_counter += 1
+
+            line_number += insertion_counter
             text = line.content.strip('\n')
-            if mode == Mode.DELETION:
-                print(Color.RED + f'{n} {mode} {text}' + Color.END)
-            elif mode == Mode.INSERTION:
-                print(Color.GREEN + f'{n} {mode} {text}' + Color.END)
+            if line.mode == Mode.DELETION:
+                print(Color.RED + f'{line_number-1} {line.mode} {text}' + Color.END)
             else:
-                print(f'{n} {mode} {text}')
+                print(f'{line_number} {line.mode} {text}')
+                line_number += 1
 
     @staticmethod
     def read_file(file_name: str) -> Dict:
@@ -174,11 +153,14 @@ def get_operations(file_1: Text, file_2: Text):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("usage: dif <file1> <file2>")
-        sys.exit(-1)
+    # if len(sys.argv) != 3:
+    #     print("usage: dif <file1> <file2>")
+    #     sys.exit(-1)
 
-    file_1 = Text(file_name=sys.argv[1])
-    file_2 = Text(file_name=sys.argv[2])
+    file_1 = Text(file_name="main.c")
+    file_2 = Text(file_name="main.cpp")
+
+    # file_1 = Text(file_name="file_1.py")
+    # file_2 = Text(file_name="file_2.py")
 
     file_1.display_text(get_operations(file_1, file_2))
