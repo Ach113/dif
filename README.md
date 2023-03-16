@@ -7,8 +7,4 @@ but also the line numbers where the changes occurred, much like `git diff`.
 `python dif.py <file1> <file2>`
 
 ## Output:
-#### sample input:
-![sample_input](https://i.imgur.com/BzI1b29.png)
-
-#### program output:
-![sample_output](https://i.imgur.com/ewtAvPg.png)
+![sample_output](https://i.imgur.com/iEIqiG4.png)
