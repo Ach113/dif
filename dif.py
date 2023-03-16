@@ -61,6 +61,10 @@ class Text:
         return len(self.lines)
 
     def structure_text(self, inserts: List[Line]):
+        """
+        determines order in which the unchanged, deleted and inserted lines need to be printed
+        :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
+        """
         stack = list()  # (line_number, mode, line)
         line_number, insertion_counter, deletion_counter = 1, 0, 0
         for _, line in self.lines.items():
@@ -83,6 +87,10 @@ class Text:
         return sorted(stack, key=lambda x: (x[0], x[1]))
 
     def display_text(self, inserts: List[Line]):
+        """
+        displays the output of the program
+        :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
+        """
         display_stack = self.structure_text(inserts)
         for n, mode, line in display_stack:
             text = line.content.strip('\n')
@@ -107,6 +115,9 @@ class Text:
 
 
 def levenshtein_distance(file_1: Text, file_2: Text) -> np.array:
+    """
+    constructs grid which contains number of operations required to transform `file_1` to `file_2`
+    """
     grid = np.zeros(shape=(len(file_1) + 1, len(file_2) + 1))
     for row in range(1, len(file_2)+1):
         grid[0, row] = row
@@ -127,6 +138,11 @@ def levenshtein_distance(file_1: Text, file_2: Text) -> np.array:
 
 
 def get_operations(file_1: Text, file_2: Text):
+    """
+    using Levenshtein distance, calculates which deletions/insertions need to be made
+    marks lines that need to be deleted by setting mode of lines in `file_1` to `Mode.DELETION`
+    :return: list of lines from `file_2` which need to be inserted into `file_1`
+    """
     insertions = list()
 
     grid = levenshtein_distance(file_1, file_2)
