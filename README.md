@@ -7,12 +7,6 @@ but also the line numbers where the changes occurred, much like `git diff`.
 `python dif.py <file1> <file2>`
 
 ## Output:
-<font color="red"><pre>1 - #include "stdio.h"</font> \
-<font color="green">1 + #include &lt;iostream></font> \
-<font color="green">2 + using namespace std;</font> \
-<font color="lightgray">3   </font> \
-<font color="lightgray">4   int main() {</font> \
-<font color="red">5 -     printf("Hello world!\n");</font>  \
-<font color="green">5 +     cout << "Hello world!" << endl;</font> \
-<font color="lightgray">6       return 0;</font> \
-<font color="lightgray">7   }</pre></font> 
+![sample_input](https://imgur.com/a/NgGinqE)
+
+![sample_output](https://imgur.com/a/f0F10ss)
