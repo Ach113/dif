@@ -62,6 +62,8 @@ class Text:
         displays changes in text in appropriate order and corresponding color
         :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
         """
+        if all(x.mode == Mode.NO_ACTION for x in list(self.lines.values())) and len(inserts) == 0:
+            return
         line_number, insertion_counter = 1, 0
         for _, line in self.lines.items():
 
@@ -153,14 +155,11 @@ def get_operations(file_1: Text, file_2: Text):
 
 
 if __name__ == '__main__':
-    # if len(sys.argv) != 3:
-    #     print("usage: dif <file1> <file2>")
-    #     sys.exit(-1)
+    if len(sys.argv) != 3:
+        print("usage: dif <file1> <file2>")
+        sys.exit(-1)
 
-    file_1 = Text(file_name="main.c")
-    file_2 = Text(file_name="main.cpp")
-
-    # file_1 = Text(file_name="file_1.py")
-    # file_2 = Text(file_name="file_2.py")
+    file_1 = Text(file_name=sys.argv[1])
+    file_2 = Text(file_name=sys.argv[2])
 
     file_1.display_text(get_operations(file_1, file_2))
