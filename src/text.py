@@ -61,7 +61,7 @@ class Text:
         if all(x.mode == Mode.NO_ACTION for x in list(self.lines.values())) and len(inserts) == 0:
             return
 
-        line_number, insertion_counter = 1, 0
+        line_number = 1
         stack = list()  # stack will hold the lines that will be displayed
         for _, line in self.lines.items():
 
