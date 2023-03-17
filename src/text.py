@@ -56,20 +56,21 @@ class Text:
         displays changes in text in appropriate order and corresponding color
         :param inserts: list of lines from `file_2` that need to be inserted into `file_1`
         """
+
+        # don't display anything if there are no changes
         if all(x.mode == Mode.NO_ACTION for x in list(self.lines.values())) and len(inserts) == 0:
             return
 
         line_number, insertion_counter = 1, 0
-        stack = list()
+        stack = list()  # stack will hold the lines that will be displayed
         for _, line in self.lines.items():
-            insertion_counter = 0
+
+            # check if there are any lines from <file_2> to insert into stack
             if inserts and inserts[0].line_number <= line_number:
                 l = inserts.pop(0)
                 l.line_number = line_number
                 stack.append(l)
-                insertion_counter += 1
-
-            line_number += insertion_counter
+                line_number += 1
 
             if line.mode == Mode.DELETION:
                 line.line_number = line_number - 1
@@ -78,29 +79,17 @@ class Text:
                 line.line_number = line_number
                 stack.append(line)
                 line_number += 1
+
         # sort wrt line number, mode (deletions first, then insertions, finally default)
         stack = sorted(stack, key=lambda x: (x.line_number, x.mode))
-        # rearrange deletions
-        # i = 0
-        # prev_del_idx = -1
-        # prev_swap_idx = -1
-        # while i < len(stack):
-        #     if stack[i].mode == Mode.DELETION and prev_del_idx > 0 and \
-        #             stack[i].line_number - stack[prev_del_idx].line_number == 1:
-        #         prev_del_idx = i
-        #         prev_swap_idx = max(i+1, prev_swap_idx)
-        #         while stack[prev_swap_idx].mode != Mode.DELETION:
-        #             prev_swap_idx += 1
-        #         prev_swap_idx += 1
-        #         stack[i], stack[prev_swap_idx] = stack[prev_swap_idx], stack[i]
-        #     else:
-        #         prev_del_idx = i
-        #     i += 1
 
         self.display(stack)
 
     @staticmethod
     def display(stack: list):
+        """
+        displays contents of `stack` in appropriate colors
+        """
         for line in stack:
             text = line.content.strip('\n')
             if line.mode == Mode.DELETION:
